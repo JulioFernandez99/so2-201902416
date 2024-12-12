@@ -428,3 +428,13 @@
 547	x32	pwritev2		compat_sys_pwritev64v2
 # This is the end of the legacy x32 range.  Numbers 548 and above are
 # not special and are not to be used for x32-specific syscalls.
+
+# Llamada de prueba
+548 common getprueba sys_juferpr
+549 common capture_memory_snapshot sys_capture_memory_snapshot
+550 common track_syscall_usage sys_track_syscall_usage
+551 common get_io_throttle sys_get_io_throttle
+
+
+
+
