@@ -269,6 +269,21 @@ https://stackoverflow.com/questions/57988667/what-does-rcu-read-lock-actually-do
 
 https://medium.com/@agadallh5/esrch-a-comprehensive-guide-acd50b133165
 
+---
+| Día  | Actividad           |Links de apoyo           |
+|------|---------------------|---------------------|
+| Día 0|Configure mi entorno,descargue virual box, descargue y compile el kernel                     |	||
+| Día 1|Este dia empece con buscando informacion de como cambiar el nomre del sistema y el saludo                    | https://www.oreilly.com/library/view/understanding-the-linux/0596002130/apas05.html - https://sopa.dis.ulpgc.es/ii-dso/leclinux/init_main/LEC5_INIT_MAIN.pdf -  https://docs.kernel.org/core-api/printk-basics.html ||
+| Día 2|  En el dia dos por poco no sigo el curso. Probe de muchas formas hacer la syscall1 y no lograba nada funcional, ya que no habia terminado de comprender bien la estructura del kernel                   |||
+| Día 3|  Este dia el auxiliar menciono la estructura sysinfo y fue donde comprendi todo, lei mas documentacion y logre hacer la primera syscall                   |||
+| Día 4| Hice la syscall2 y syscal3, cabe mencionar que para la syscall2, recibi un poco de ayuda de parte de un ingeniero, donde me explico teoria y el enfoque que debia de uitlizar para realizar la syscall|  https://stackoverflow.com/questions/56531880/how-does-the-kernel-use-task-struct - rcu_read_lock -> puedo aceder al archivo de io del proceso find_task_by_vpid -> busca el pid ->https://stackoverflow.com/questions/8547332/efficient-way-to-find-task-struct-by-pid https://stackoverflow.com/questions/57988667/what-does-rcu-read-lock-actually-do-linux-kernel -> rcu_read_unlock() - https://medium.com/@agadallh5/esrch-a-comprehensive-guide-acd50b133165  ||
+| Día 5| Este dia hice mis test a mis syscalls y algunas modificacion que eran necesarias para que entendiera mas la informacion, hice la documentacion                    | ||
+
+---
+# Comentario personal
+EL proyecto fue un poco complicado al inicio, ya que no tenia nada de conocimiento de la estructura del kernel, con la mayor dificultad que me tope al principio fue que no sabia en que archivos definir mis syscalls y en donde implementarlas, en lo personal aprendi esta estructura buscando documentacion y buscando videos. 
+
+Cuando logre comprender la estructura del kernel, mi siguiente reto fue comprender la sintaxis, porque era DEFINE1 para algunas macros y para otras era DEFINE0 y algunas cosas mas, tambien me causaba duda en que parte de los archivos colocar el codigo. La verdad el proyecto me sirvio mucho para desarrollar mis habilidades de programador y demostrarme a mi mismo que soy capaz de lograr cosas que a veces pienso que no puedo lograr.
 
 <br>
 
