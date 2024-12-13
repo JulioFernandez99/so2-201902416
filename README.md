@@ -5,7 +5,7 @@
     <span style="font-size: 18px;">Universidad de San Carlos de Guatemala</span><br>
     <span style="font-size: 18px;">Facultad de Ingeniería</span><br>
     <span style="font-size: 18px;">Escuela de Ciencias y Sistemas</span><br>
-    <span style="font-size: 18px;">Laboratorio de Sistemas de Operativos 2<br>
+    <span style="font-size: 18px;">Laboratorio de Sistemas Operativos 2<br>
     <span style="font-size: 18px;">Julio Alfredo Fernández Rodríguez 201902416</span>
 </div>
 
