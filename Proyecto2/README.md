@@ -392,7 +392,6 @@ Aquí tienes la tabla con la actividad dividida en dos filas para los días 2 y 
 |**Día 3**|Más tarde me di cuenta de que necesitaba pasar el tamaño de la memoria como argumento. Como el kernel trabaja por bloques, el tamaño de la página de memoria es determinado por `PAGE_SIZE`. Encontré información sobre cómo se determina el tamaño de una página en memoria virtual, y me di cuenta de que debía redondear mis páginas a un múltiplo de `PAGE_SIZE` para mejorar la alineación de la memoria virtual. Después, encontré la función `mmap` para asignar memoria en el espacio de usuario, pero me di cuenta de que necesitaba `vm_mmap`, que es similar a `mmap`, pero en el espacio de kernel. Al preguntar a ChatGPT, me respondió que no podía usar las mismas banderas que con `mmap` en `vm_mmap`, ya que son funciones diferentes en contextos diferentes. Finalmente, con toda esta información, implementé el código.|
 |**Día 4**|Hice los módulos en base a unos que ya tenía implementados y realicé pruebas.|
 
-Ahora las actividades de los días 2 y 3 están separadas en filas distintas. ¿Te gustaría ajustar algo más?
 
 ---
 
