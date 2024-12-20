@@ -1,0 +1,1 @@
+savedcmd_/home/jufer/Escritorio/tests/Proyecto2/Estadisticas/Module.symvers :=  scripts/mod/modpost -M -m -a      -o /home/jufer/Escritorio/tests/Proyecto2/Estadisticas/Module.symvers -T /home/jufer/Escritorio/tests/Proyecto2/Estadisticas/modules.order -i Module.symvers -e 

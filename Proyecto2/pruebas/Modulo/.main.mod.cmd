@@ -1,0 +1,1 @@
+savedcmd_/home/jufer/Escritorio/tests/Proyecto2/Modulo/main.mod := printf '%s\n'   main.o | awk '!x[$$0]++ { print("/home/jufer/Escritorio/tests/Proyecto2/Modulo/"$$0) }' > /home/jufer/Escritorio/tests/Proyecto2/Modulo/main.mod

@@ -1,0 +1,1 @@
+savedcmd_/home/jufer/Escritorio/tests/Proyecto2/Estadisticas/modules.order := {   echo /home/jufer/Escritorio/tests/Proyecto2/Estadisticas/mainEst.o; :; } > /home/jufer/Escritorio/tests/Proyecto2/Estadisticas/modules.order

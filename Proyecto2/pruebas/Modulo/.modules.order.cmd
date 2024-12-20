@@ -1,0 +1,1 @@
+savedcmd_/home/jufer/Escritorio/tests/Proyecto2/Modulo/modules.order := {   echo /home/jufer/Escritorio/tests/Proyecto2/Modulo/main.o; :; } > /home/jufer/Escritorio/tests/Proyecto2/Modulo/modules.order

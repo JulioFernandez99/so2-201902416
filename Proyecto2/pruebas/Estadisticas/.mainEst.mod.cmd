@@ -1,0 +1,1 @@
+savedcmd_/home/jufer/Escritorio/tests/Proyecto2/Estadisticas/mainEst.mod := printf '%s\n'   mainEst.o | awk '!x[$$0]++ { print("/home/jufer/Escritorio/tests/Proyecto2/Estadisticas/"$$0) }' > /home/jufer/Escritorio/tests/Proyecto2/Estadisticas/mainEst.mod
