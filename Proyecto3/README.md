@@ -1,4 +1,19 @@
 
+![](https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif)
+
+<div style="text-align: center;">
+    <span style="font-size: 18px;">Universidad de San Carlos de Guatemala</span><br>
+    <span style="font-size: 18px;">Facultad de Ingeniería</span><br>
+    <span style="font-size: 18px;">Escuela de Ciencias y Sistemas</span><br>
+    <span style="font-size: 18px;">Laboratorio de Sistemas Operativos 2<br>
+    <span style="font-size: 18px;">Julio Alfredo Fernández Rodríguez 201902416</span>
+</div>
+
+<br>
+
+![](https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif)
+
+
 Para la syscall 1 sabia que tenia que hacer uso de una lista, asi que lo primero que hice fue hacer solo el codigo de mi macro que reciba el pid y el maximo_memoria, y lo almacene en forma de lista simplemente enlazada, para hacer esto la verdad es que no busque mucho ya que tenia conocimiento de como hacerlo, sin embargo para estar seguro revide una implementacion en python (mas facil de comprender) y lo compare con mi codigo (use este enlace https://www.datacamp.com/es/tutorial/python-linked-lists ).
 
 Teniendo mi lista simplemente enlazada bien definida solo tenia que econtrar la manera de limitar la memoria a mi proceso, buscando en google encontre un un struct llamado rlimit con atributos rlim_cur y rlim_max y entendi que tenia que usarlos para definir el limite de memoria (lo que mencione esta en la parte de DESCRIPCION https://manpages.ubuntu.com/manpages/focal/es/man2/getrlimit.2.html )
@@ -576,3 +591,30 @@ return -102; // Proceso no está en la lista
 # Comentario
 
 Para este proyecto la verdad no encontre mayor complicacion ya que tenia conocimientos previos de listas enlazadas, al inicio queria trabajar con una lista circular doblemente enlazada pero se me estaba complicando un poco la estructura, asi que decidi ustilizar una simplemente enlazada, de ahi mi mayor dificultad fue como definir el limite, que pense que hiba a ser mas facil pero si me costo un poco. En lo demas solo eran las operaciones de una lista enlazada asi que no tuve complicaciones.
+
+
+<br>
+
+ ![](https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif)
+
+#### <div align="center"> Desarrollado por
+<div align="center">
+
+<br>
+
+
+Julio Alfredo Fernandez Rodriguez
+201902416
+
+<br>
+
+<img src="https://user-images.githubusercontent.com/74038190/229223263-cf2e4b07-2615-4f87-9c38-e37600f8381a.gif" width="200px" />
+
+<br>
+
+
+
+<br>
+<br>
+
+ ![](https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif)
