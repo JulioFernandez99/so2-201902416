@@ -1044,12 +1044,17 @@ asmlinkage long sys_swap_info_syscall(unsigned long __user *total, unsigned long
 
 asmlinkage long sys_capture_memory_snapshot(struct extended_sysinfo __user *ext_info);
 
-/* ----------------------------------------- limitador de memoria ------------------------------------------------ */
-asmlinkage long sys_agregar_proceso(pid_t pid, unsigned int memoria_maxima);
-/* ----------------------------------------- listador de procesos ------------------------------------------------ */
-asmlinkage long sys_obtener_lista_procesos(struct proceso_info __user *buffer, size_t buffer_size);
+/* ----------------------------------------- agregar proceso ------------------------------------------------ */
+asmlinkage long sys_jufer_agregar_proceso(pid_t pid, unsigned int memoria_maxima);
 
+/* ----------------------------------------- lista de procesos ------------------------------------------------ */
+asmlinkage long sys_jufer_obtener_lista_procesos(struct proceso_info __user *buffer,size_t max_entries,int __user *processes_returned);
 
+/* ----------------------------------------- actualizar proceso ------------------------------------------------ */
+asmlinkage long sys_jufer_actualizar_proceso(pid_t pid, unsigned int nueva_memoria_maxima);
+
+/* ----------------------------------------- eliminar proceso ------------------------------------------------ */
+asmlinkage long sysjufer__eliminar_proceso(pid_t pid);
 
 
 /* __ARCH_WANT_SYSCALL_DEPRECATED */

@@ -193,7 +193,7 @@ static bool set_one_prio_perm(struct task_struct *p)
 
 struct extended_sysinfo {
     struct sysinfo si;
-    unsigned long active_memory; // En KB
+    unsigned long active_memory; 
 };
 
 struct nodo_proceso {
@@ -209,7 +209,7 @@ static struct nodo_proceso *ultimo = NULL;
 
 struct proceso_info {
     pid_t pid;
-    unsigned int memoria_maxima; // En MB
+    unsigned int memoria_maxima; 
 };
 
 /*
@@ -3017,55 +3017,77 @@ SYSCALL_DEFINE2(swap_info_syscall, unsigned long __user *, total, unsigned long 
     return 0; // Éxito
 }
 
-/* ----------------------------------------- limitador de memoria ------------------------------------------------ */
+/* ----------------------------------------- agregar procesos ------------------------------------------------ */
 
-SYSCALL_DEFINE2(agregar_proceso,pid_t,pid,unsigned int, memoria_maxima){
+SYSCALL_DEFINE2(jufer_agregar_proceso, pid_t, pid, unsigned int, memoria_maxima) {
 
+	struct nodo_proceso *actual;
     struct task_struct *task; // uso task_struct para buscar el proceso
     struct nodo_proceso *nuevo_nodo; // nuevo nodo a agregar
+	struct mm_struct *mm;
+	unsigned long memoria_usada = 0;
 
-    // verfico si el usuario es root
-    if (current_uid().val != 0){
+    // verifico si el usuario es root
+    if (current_uid().val != 0) {
         return -EPERM;
     }
 
     // veo si pid y memoria_maxima son validos
-    if (pid < 0 || memoria_maxima < 0){
+    if (pid < 0 || memoria_maxima < 0) {
+        return -EINVAL;
+    }
+
+	// verifico si el proceso ya está en la lista
+    actual = cabeza;
+    while (actual != NULL) {
+        if (actual->pid == pid) {
+            return -101;  
+        }
+        actual = actual->siguiente;
+    }
+
+    // busco el proceso con el pid
+    task = find_task_by_vpid(pid);
+    if (task == NULL) {
+        return -ESRCH;
+    }
+
+    // verificar si tiene mm_struct, si no tiene no se puede limitar la memoria
+    if (task->mm == NULL) {
         return -EINVAL;
     }
 
 
-    // busco el proceso con el pid
-    task = find_task_by_vpid(pid);
-    if (task == NULL){
-        return -ESRCH;
+	get_task_struct(task);
+    rcu_read_unlock();
+
+    // verifico el uso actual de memoria del proceso
+    mm = get_task_mm(task);
+    if (!mm) {
+        put_task_struct(task);
+        return -EINVAL;
     }
-
-    // verificar si tiene mm_struct si no tiene no se puede limitar la memoria
-    if (task->mm == NULL) {
-        return -EINVAL; 
+	printk("Antes de memoria usada");
+    // Verificar el uso actual de memoria del proceso
+    memoria_usada = get_mm_rss(mm) >> (20 - PAGE_SHIFT);
+    if (memoria_usada > memoria_maxima) {
+        mmput(mm);
+        put_task_struct(task);
+        return -100; 
     }
-
-    // Limitar la memoria en el mm_struct del proceso
-    // task->mm tiene la estructura mm_struct del proceso
-    // rlim[RLIMIT_AS] es la estructura que tiene los limites de la memoria
-    // RLIMIT_AS es el limite de la memoria virtual
-    // rlim_cur es el limite actual
-    // rlim_max es el limite maximo
-   
-
-	task->signal->rlim[RLIMIT_AS].rlim_cur = memoria_maxima*1024*1024;
+	printk("Despues de memoria usada");
+    // limito la memoria
+    task->signal->rlim[RLIMIT_AS].rlim_cur = memoria_maxima*1024*1024;
     task->signal->rlim[RLIMIT_AS].rlim_max = memoria_maxima*1024*1024;
-   
-  
 
+	printk("Se asigno la memoria exitosamente");
 
     // creo el nuevo nodo
-    nuevo_nodo = kmalloc(sizeof(*nuevo_nodo),GFP_KERNEL);
+    nuevo_nodo = kmalloc(sizeof(*nuevo_nodo), GFP_KERNEL);
     // GFP_KERNEL -> es para espacio de memoria del kernel
    
     // verifico si se pudo crear el nodo
-    if (nuevo_nodo == NULL){
+    if (nuevo_nodo == NULL) {
         return -ENOMEM;
     }
 
@@ -3073,46 +3095,43 @@ SYSCALL_DEFINE2(agregar_proceso,pid_t,pid,unsigned int, memoria_maxima){
     nuevo_nodo->pid = pid;
     nuevo_nodo->memoria_maxima = memoria_maxima;
 
-    
-    if (cabeza == NULL){
+    if (cabeza == NULL) {
         cabeza = nuevo_nodo;
         ultimo = nuevo_nodo;
-    }else{
+    } else {
         ultimo->siguiente = nuevo_nodo;
         ultimo = nuevo_nodo;
     }
 
-    /*
-    no me estaba seguro asi estaba bien, asi que revise un implementacion en python 
-    https://www.datacamp.com/es/tutorial/python-linked-lists 
-    
-    */
-
     return 0;
-
 }
 
-// ----------------------------------------- listador de procesos ------------------------------------------------ */
-SYSCALL_DEFINE2(obtener_lista_procesos, struct proceso_info __user *, buffer, size_t, buffer_size) {
-    struct nodo_proceso *actual = cabeza;
+// ----------------------------------------- listar procesos ------------------------------------------------ */
+SYSCALL_DEFINE3(jufer_obtener_lista_procesos,struct proceso_info __user *, buffer,size_t, max_entries,int __user *, processes_returned) {
+    
+    struct nodo_proceso *actual = cabeza; 
     size_t count = 0;
 
-    // verifico si el usuario es root
-    if (current_uid().val != 0) {
-        return -EPERM;
+
+    // vlido parámetros
+    if (!buffer || !processes_returned || max_entries <= 0) {
+        return -EINVAL; 
     }
 
-    // recorro la lista enlazada y copio al espacio de usuario
-    while (actual != NULL) {
-        struct proceso_info info;
-        if (count >= buffer_size) {
-            return -ENOMEM; 
-        }
+    if (!access_ok(buffer, max_entries * sizeof(struct proceso_info)) ||
+        !access_ok(processes_returned, sizeof(int))) {
+        return -EFAULT; 
+    }
 
+    // recorro la lista
+    while (actual != NULL && count < max_entries) {
+        struct proceso_info info;
+
+        
         info.pid = actual->pid;
         info.memoria_maxima = actual->memoria_maxima;
 
-        // copio en espacio de usuario
+        
         if (copy_to_user(&buffer[count], &info, sizeof(info))) {
             return -EFAULT; 
         }
@@ -3121,8 +3140,123 @@ SYSCALL_DEFINE2(obtener_lista_procesos, struct proceso_info __user *, buffer, si
         actual = actual->siguiente;
     }
 
-    return count; // retorna el número de procesos copiados
+
+    if (put_user(count, processes_returned)) {
+        return -EFAULT; 
+    }
+
+    return 0; 
 }
+
+// ----------------------------------------- actualizar proceso ------------------------------------------------ */
+SYSCALL_DEFINE2(jufer_actualizar_proceso, pid_t, pid, unsigned int, nueva_memoria_maxima) {
+    struct nodo_proceso *actual = cabeza;
+
+	/*
+	
+		TODO: preguntale al aux porque cuando intento acceder al mm de un proceso me esta pidiendo permisos sudo
+
+	*/
+    // verifico privilegios del usuario
+    if (current_uid().val != 0) {
+        return -EPERM; // Permiso denegado
+    }
+
+    // valido datos correctos
+    if (pid < 0 || nueva_memoria_maxima < 0) {
+        return -EINVAL; // Argumentos inválidos
+    }
+
+    // busco el nodo en la lista
+    while (actual != NULL) {
+        if (actual->pid == pid) {
+            // si lo encuentro verifico el proceso
+            struct task_struct *task = find_task_by_vpid(pid);
+            if (task == NULL) {
+                return -ESRCH;
+            }
+
+            if (task->mm == NULL) {
+                return -EINVAL;
+            }
+
+			// // porque me da error? preguntale al aux
+            // unsigned long memoria_usada = task->mm->total_vm * PAGE_SIZE / (1024 * 1024); 
+            // if (memoria_usada > nueva_memoria_maxima) {
+            //     return -100; 
+            // }
+
+            // actualizo el limite
+            task->signal->rlim[RLIMIT_AS].rlim_cur = nueva_memoria_maxima * 1024 * 1024;
+            task->signal->rlim[RLIMIT_AS].rlim_max = nueva_memoria_maxima * 1024 * 1024;
+
+            // actualizo
+            actual->memoria_maxima = nueva_memoria_maxima;
+
+            return 0; // Éxito
+        }
+
+        actual = actual->siguiente;
+    }
+
+    // Nodo no encontrado
+    return -102; // Proceso no está en la lista
+}
+
+// ----------------------------------------- eliminar proceso ------------------------------------------------ */
+SYSCALL_DEFINE1(jufer_eliminar_proceso, pid_t, pid) {
+    struct nodo_proceso *actual = cabeza;
+    struct nodo_proceso *anterior = NULL;
+
+    // si es root
+    if (current_uid().val != 0) {
+        return -EPERM; 
+    }
+
+    // valido el pid
+    if (pid < 0) {
+        return -EINVAL; 
+    }
+
+    // si el proceso existe
+    struct task_struct *task = find_task_by_vpid(pid);
+    if (!task) {
+        return -ESRCH; 
+    }
+
+    // busco en la lista
+    while (actual != NULL) {
+        if (actual->pid == pid) {
+            // si lo encuentro -> lo elimino
+            if (anterior == NULL) {
+                cabeza = actual->siguiente;
+                if (cabeza == NULL) {
+                    ultimo = NULL; 
+                }
+            } else {
+                anterior->siguiente = actual->siguiente;
+                if (actual == ultimo) {
+                    ultimo = anterior; 
+                }
+            }
+
+            if (task->mm) {
+                task->signal->rlim[RLIMIT_AS].rlim_cur = actual->memoria_maxima;
+                task->signal->rlim[RLIMIT_AS].rlim_max = actual->memoria_maxima;
+            }
+
+            // libero la memoria del nodo
+            kfree(actual);
+            return 0; 
+        }
+
+        anterior = actual;
+        actual = actual->siguiente;
+    }
+
+    return -102; 
+}
+
 
 #ifdef CONFIG_COMPAT
 struct compat_sysinfo {

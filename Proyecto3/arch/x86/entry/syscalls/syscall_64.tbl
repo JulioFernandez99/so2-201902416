@@ -432,5 +432,17 @@
 549 common tamalloc sys_tamalloc
 550 common swap_info_syscall sys_swap_info_syscall
 551 common capture_memory_snapshot sys_capture_memory_snapshot
-552 common agregar_proceso sys_agregar_proceso
-553 common obtener_lista_procesos sys_obtener_lista_procesos
+
+# CRUD 
+
+# Agregar procesos
+557 common jufer_agregar_proceso sys_jufer_agregar_proceso
+
+# Listar procesos
+558 common jufer_obtener_lista_procesos sys_jufer_obtener_lista_procesos
+
+# Actualizar 
+559 common jufer_actualizar_proceso sys_jufer_actualizar_proceso
+
+# Eliminar
+560 common  jufer_eliminar_proceso sys_jufer_eliminar_proceso
