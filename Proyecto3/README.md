@@ -473,49 +473,47 @@ struct nodo_proceso *anterior = NULL;
 
   
 
-// Verificar privilegios del usuario (debe ser root)
+// verifico privilegios root
 
 if (current_uid().val != 0) {
 
-return -EPERM; // Permiso denegado
+return -EPERM; 
 
 }
 
   
 
-// Validar el PID
+
 
 if (pid < 0) {
 
-return -EINVAL; // PID inválido
+return -EINVAL; 
 
 }
 
   
 
-// Verificar si el proceso existe
+// verifico si el proceso existe
 
 struct task_struct *task = find_task_by_vpid(pid);
 
 if (!task) {
 
-return -ESRCH; // Proceso no encontrado
+return -ESRCH; 
 
 }
 
   
 
-// Buscar el nodo con el PID especificado en la lista
+// busco el nodo con el PID especificado en la lista
 
 while (actual != NULL) {
 
 if (actual->pid == pid) {
 
-// Nodo encontrado, eliminarlo de la lista
+
 
 if (anterior == NULL) {
-
-// El nodo a eliminar es la cabeza
 
 cabeza = actual->siguiente;
 
@@ -531,7 +529,7 @@ anterior->siguiente = actual->siguiente;
 
 if (actual == ultimo) {
 
-ultimo = anterior; // Actualizar el último nodo
+ultimo = anterior; 
 
 }
 
@@ -539,7 +537,7 @@ ultimo = anterior; // Actualizar el último nodo
 
   
 
-// Restablecer los límites del proceso (opcional)
+// re-defino los límites del proceso
 
 if (task->mm) {
 
@@ -551,11 +549,11 @@ task->signal->rlim[RLIMIT_AS].rlim_max = actual->memoria_maxima;
 
   
 
-// Liberar memoria del nodo eliminado
+// libero la memoria
 
 kfree(actual);
 
-return 0; // Operación exitosa
+return 0; 
 
 }
 
